@@ -8,7 +8,6 @@ const postSchema = new mongoose.Schema(
     desc: {
       type: String,
       required: true,
-      unique: true,
     },
     creatorId: {
       type: mongoose.Types.ObjectId,

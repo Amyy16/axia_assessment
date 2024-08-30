@@ -24,7 +24,7 @@ const getPosts = async (req, res) => {
 
 // get single post
 const singlePost = async (req, res) => {
-  const id = req.params;
+  const id = req.params.id;
   try {
     const post = await postModel.findById(id);
     if (!post) {
