@@ -10,5 +10,5 @@ const {
 routes.post("/post", makePost);
 routes.get("/post", getPosts);
 routes.get("/post/:id", singlePost);
-routes.post("/likes", likePost);
+routes.put("/likes", likePost);
 module.exports = routes;

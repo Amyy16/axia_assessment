@@ -24,7 +24,7 @@ const getPosts = async (req, res) => {
 
 // get single post
 const singlePost = async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   try {
     const post = await postModel.findById(id);
     if (!post) {
@@ -46,7 +46,7 @@ const likePost = async (req, res) => {
   const gottenlikes = post.likes;
   const includelikes = gottenlikes.includes(userid);
   if (!includelikes) {
-    likes.push(userid);
+    gottenlikes.push(userid);
   } else {
     const index = gottenlikes.indexOf(userid);
     gottenlikes.splice(index, 1);
