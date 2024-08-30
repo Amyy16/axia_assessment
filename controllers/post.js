@@ -30,6 +30,7 @@ const singlePost = async (req, res) => {
     if (!post) {
       return res.json({ message: "post does not exist" });
     }
+    res.json(post);
   } catch (error) {
     res.json({ message: error.message });
   }
