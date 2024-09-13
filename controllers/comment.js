@@ -18,7 +18,7 @@ const makeComment = async (req, res) => {
   }
 };
 
-//get comment
+//get single comment
 const getComment = async (req, res) => {
   const { commentId } = req.query;
   try {
@@ -27,7 +27,22 @@ const getComment = async (req, res) => {
       .populate({ path: "userId", select: "username email gender" })
       .populate({ path: "postId", select: "title desc" });
     res.json(oneComment);
-  } catch (error) {}
+  } catch (error) {
+    res.json({ message: error.message });
+  }
 };
 
-module.exports = { makeComment, getComment };
+//get all comments
+const getallComments = async (req, res) => {
+  try {
+    const allcomments = await postModel
+      .find()
+      .populate({ path: "userId", select: "username email gender" })
+      .populate({ path: "postId", select: "title desc" });
+    res.json(allcomments);
+  } catch (error) {
+    res.json({ message: error.message });
+  }
+};
+
+module.exports = { makeComment, getComment, getallComments };
