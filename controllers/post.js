@@ -18,7 +18,7 @@ const getPosts = async (req, res) => {
   try {
     const allPosts = await postModel
       .find()
-      .populate({ path: "creatorId", select: "username email gender" })
+      .populate({ path: "creatorId", select: "username email" })
       .populate({ path: "comment", select: "comment userId" });
     res.json(allPosts);
   } catch (error) {

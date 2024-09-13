@@ -1,4 +1,4 @@
-const commentModel = require("../models/comment");
+const commentModel = require("../models/comments");
 const postModel = require("../models/post");
 
 //create a comment
@@ -6,13 +6,13 @@ const makeComment = async (req, res) => {
   const { comment, postId } = req.body;
   const { id } = req.user;
   try {
-    const newComment = new commentModel({ comment, creatorId: id, postId });
+    const newComment = new commentModel({ comment, userId: id, postId });
     const savedComment = await newComment.save();
     //modify the post comment field
     await postModel.findByIdAndUpdate(postId, {
-      $push: { comments: savedComment.id },
+      $push: { comment: savedComment.id },
     });
-    res.json({ msg: "comment created successfully" });
+    res.json({ message: "comment created successfully" });
   } catch (error) {
     console.log(error.message);
   }
@@ -24,7 +24,7 @@ const getComment = async (req, res) => {
   try {
     const oneComment = await commentModel
       .findById(commentId)
-      .populate({ path: "userId", select: "username email gender" })
+      .populate({ path: "userId", select: "username email" })
       .populate({ path: "postId", select: "title desc" });
     res.json(oneComment);
   } catch (error) {
@@ -35,9 +35,9 @@ const getComment = async (req, res) => {
 //get all comments
 const getallComments = async (req, res) => {
   try {
-    const allcomments = await postModel
+    const allcomments = await commentModel
       .find()
-      .populate({ path: "userId", select: "username email gender" })
+      .populate({ path: "userId", select: "username email" })
       .populate({ path: "postId", select: "title desc" });
     res.json(allcomments);
   } catch (error) {

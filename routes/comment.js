@@ -5,7 +5,7 @@ const {
   getComment,
   getallComments,
 } = require("../controllers/comment");
-const { verify } = require("jsonwebtoken");
+const { verify } = require("../middleware/verify");
 
 routes.post("/comment", verify, makeComment);
 routes.get("/comment", getComment);
