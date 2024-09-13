@@ -12,10 +12,17 @@ const postSchema = new mongoose.Schema(
     creatorId: {
       type: mongoose.Types.ObjectId,
       required: true,
+      ref: "user",
     },
     likes: {
       type: [mongoose.Types.ObjectId],
       default: [],
+      ref: "user",
+    },
+    comment: {
+      type: [mongoose.Types.ObjectId],
+      default: [],
+      ref: "comment",
     },
   },
   { timestamps: true }

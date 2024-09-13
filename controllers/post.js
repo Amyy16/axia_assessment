@@ -2,8 +2,9 @@ const postModel = require("../models/post");
 
 //make a post
 const makePost = async (req, res) => {
-  const body = req.body;
-  const newPost = new postModel(body);
+  const { creatorId, ...others } = req.body;
+  const { id } = req.user;
+  const newPost = new postModel({ ...others, creatorId: id });
   try {
     await newPost.save();
     res.json({ message: "post created successfully" });
@@ -15,7 +16,10 @@ const makePost = async (req, res) => {
 //get all post
 const getPosts = async (req, res) => {
   try {
-    const allPosts = await postModel.find();
+    const allPosts = await postModel
+      .find()
+      .populate({ path: "creatorId", select: "username email gender" })
+      .populate({ path: "comment", select: "comment userId" });
     res.json(allPosts);
   } catch (error) {
     res.json({ message: error.message });
@@ -26,7 +30,10 @@ const getPosts = async (req, res) => {
 const singlePost = async (req, res) => {
   const { id } = req.params;
   try {
-    const post = await postModel.findById(id);
+    const post = await postModel
+      .findById(id)
+      .populate({ path: "creatorId", select: "username email gender" })
+      .populate({ path: "comment", select: "comment userId" });
     if (!post) {
       return res.json({ message: "post does not exist" });
     }
@@ -38,7 +45,8 @@ const singlePost = async (req, res) => {
 
 //liking and disliking a post
 const likePost = async (req, res) => {
-  const { id, userid } = req.body;
+  const { userid } = req.body;
+  const { id } = req.user;
   const post = await postModel.findById(id);
   if (!post) {
     return res.json({ msg: "post does not exist" });
