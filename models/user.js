@@ -12,7 +12,10 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
+    },
+    credentialAccount: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }
