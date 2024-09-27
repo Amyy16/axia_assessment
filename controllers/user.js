@@ -12,7 +12,7 @@ const registerUser = async (req, res) => {
     await newUser.save();
     res.status(200).json({ message: "user creation successful" });
   } catch (error) {
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -22,11 +22,11 @@ const login = async (req, res) => {
   try {
     const userInfo = await userModel.findOne({ email });
     if (!userInfo) {
-      return res.status(400).json({ message: "user does not exists" });
+      return res.status(404).json({ message: "user does not exists" });
     }
     const verify = bcrypt.compareSync(password, userInfo.password);
     if (!verify) {
-      return res.status(400).json({ message: "invalid credentials" });
+      return res.status(404).json({ message: "invalid credentials" });
     }
     const aboutUser = { id: userInfo.id };
     const token = jwt.sign(aboutUser, process.env.JWT_SECRET);
@@ -35,7 +35,7 @@ const login = async (req, res) => {
       .status(200)
       .json({ message: "login successful" });
   } catch (error) {
-    res.json(error.message);
+    res.status(500).json({ message: "something went wrong" });
   }
 };
 
@@ -55,17 +55,19 @@ const logoutUser = async (req, res) => {
 const oauthRegister = async (req, res) => {
   const { username, email, gender } = req.body;
   try {
-    //check if account exist and it is credential account
+    //check if account exist and if it is a credential account
     const findOne = await userModel.findOne({ email });
     if (findOne && findOne.credentialAccount) {
-      return res.status(400).json({ message: "illegal parameters" });
+      return res.status(404).json({ message: "illegal parameters" });
     }
-    //find account and login
+    //if account exists, login user
     if (findOne) {
       const aboutUser = { id: findOne.id, role: findOne.role };
       const token = jwt.sign(aboutUser, process.env.JWT_SECRET);
-      res.cookie("user_token", token);
-      return res.status(200).json({ message: "login successful" });
+      return res
+        .cookie("user_token", token)
+        .status(200)
+        .json({ message: "user login successful" });
     }
     //creating a new user and logging in
     const newUser = new userModel({
